@@ -1,16 +1,15 @@
 <?php
 
-
 namespace App\Http\Controllers;
-use App\Models\Visiteur;
 
 use Illuminate\Http\Request;
+use App\Models\Visiteur;
 
 class VisiteurController extends Controller
 {
-     public function create()
+    public function create()
     {
-        return view('form1');
+        return view('form1'); // ton formulaire de base
     }
 
     public function store(Request $request)
@@ -24,11 +23,10 @@ class VisiteurController extends Controller
             'motif' => 'required|string|max:255',
         ]);
 
-        Visiteur::create($validated);
+        // Enregistrement en base de données
+        $visiteur = Visiteur::create($validated);
 
-        // Stocker les données en session pour les réutiliser dans le formulaire 2
-        $request->session()->put('form1_data', $validated);
-
-        return redirect()->route('userinfo.create');
+        // Rediriger vers une vue récapitulative et lui passer les données du visiteur
+        return view('index', ['visiteur' => $visiteur]);
     }
 }

@@ -15,4 +15,8 @@ class UserInfo extends Model
     protected $hidden = [
         'password'
     ];
+     public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
