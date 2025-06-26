@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+
+$motDePasseHashe = Hash::make('1234');
 
 
 class UserInfoController extends Controller
@@ -10,7 +13,7 @@ class UserInfoController extends Controller
     public function create(Request $request)
     {
         // Récupérer les données du premier formulaire depuis la session
-        $form1Data = $request->session()->get('form1_data');
+        $form1Data = $request->session()->get('auth.login');
 
         return view('form2', [
             'nom' => $form1Data['nom'] ?? '',

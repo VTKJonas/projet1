@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Visiteur extends Model
 {
-    use HasFactory; // Utilise le trait correctement importé
-
     protected $fillable = [
         'nom', 'prenom', 'date', 'heure_arrivee', 'heure_depart', 'motif'
     ];

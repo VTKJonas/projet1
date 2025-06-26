@@ -4,29 +4,52 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Visiteur;
+use App\Models\User;
 
 class VisiteurController extends Controller
+
 {
     public function create()
     {
-        return view('form1'); // ton formulaire de base
+        return view('visiteurs.form');
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'date' => 'required|date',
-            'heure_arrivee' => 'required',
-            'heure_depart' => 'required',
-            'motif' => 'required|string|max:255',
-        ]);
+        $data = $request->input('visiteurs');
+        foreach ($data as $visiteurData) {
+            Visiteur::create($visiteurData);
+           
+        }
 
-        // Enregistrement en base de données
-        $visiteur = Visiteur::create($validated);
-
-        // Rediriger vers une vue récapitulative et lui passer les données du visiteur
-        return view('index', ['visiteur' => $visiteur]);
+        return redirect()->route('visiteurs.liste')->with('success', 'Les visiteurs ont été enregistrés avec succès.');
     }
+
+    public function liste(Request $request)
+{
+    $query = Visiteur::query();
+
+    if ($request->filled('search')) {
+        $search = $request->input('search');
+        $query->where('nom', 'like', "%{$search}%")
+              ->orWhere('prenom', 'like', "%{$search}%");
+    }
+
+    $visiteurs = $query->latest()->get();
+
+    return view('visiteurs.liste', compact('visiteurs'));
+}
+
+
+
+    public function response($id, $response)
+        {
+            $visiteur = Visiteur::findOrFail($id);
+
+                // Ici, stocker la réponse dans la base, ou envoyer une notification, etc.
+            $visiteur->status = $response == 'accept' ? 'Accepté' : 'Refusé';
+            $visiteur->save();
+
+            return view('visite.response', compact('visiteur', 'response'));
+        }
 }

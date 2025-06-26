@@ -3,40 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <title>Récapitulatif Visiteur</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-light">
-    <div class="container mt-5">
-        <h2 class="mb-4">Informations du Visiteur</h2>
+<body class="bg-sky-100 min-h-screen flex items-center justify-center px-4">
+    <div class="bg-white rounded-xl shadow-xl max-w-2xl w-full p-8">
+        <h2 class="text-3xl font-bold text-green-600 text-center mb-6 border-b border-green-300 pb-4">
+            🧾 Récapitulatif du Visiteur
+        </h2>
 
-        <table class="table table-bordered">
-            <tr>
-                <th>Nom</th>
-                <td>{{ $visiteur->nom }}</td>
-            </tr>
-            <tr>
-                <th>Prénom</th>
-                <td>{{ $visiteur->prenom }}</td>
-            </tr>
-            <tr>
-                <th>Date</th>
-                <td>{{ $visiteur->date }}</td>
-            </tr>
-            <tr>
-                <th>Heure d'arrivée</th>
-                <td>{{ $visiteur->heure_arrivee }}</td>
-            </tr>
-            <tr>
-                <th>Heure de départ</th>
-                <td>{{ $visiteur->heure_depart }}</td>
-            </tr>
-            <tr>
-                <th>Motif</th>
-                <td>{{ $visiteur->motif }}</td>
-            </tr>
+        <table class="w-full table-auto border border-green-300 rounded-lg overflow-hidden">
+            <tbody>
+                <tr class="bg-green-100">
+                    <th class="text-left py-3 px-4 font-semibold text-green-800 border-b border-green-200">Nom</th>
+                    <td class="py-3 px-4 border-b border-green-200">{{ $visiteur->nom }}</td>
+                </tr>
+                <tr>
+                    <th class="text-left py-3 px-4 font-semibold text-green-800 border-b border-green-200">Prénom</th>
+                    <td class="py-3 px-4 border-b border-green-200">{{ $visiteur->prenom }}</td>
+                </tr>
+                <tr class="bg-green-100">
+                    <th class="text-left py-3 px-4 font-semibold text-green-800 border-b border-green-200">Date</th>
+                    <td class="py-3 px-4 border-b border-green-200">{{ $visiteur->date }}</td>
+                </tr>
+                <tr>
+                    <th class="text-left py-3 px-4 font-semibold text-green-800 border-b border-green-200">Heure d'arrivée</th>
+                    <td class="py-3 px-4 border-b border-green-200">{{ $visiteur->heure_arrivee }}</td>
+                </tr>
+                
+                <tr>
+                    <th class="text-left py-3 px-4 font-semibold text-green-800">Motif</th>
+                    <td class="py-3 px-4">{{ $visiteur->motif }}</td>
+                </tr>
+            </tbody>
         </table>
 
-        <a href="{{ route('visiteur.create') }}" class="btn btn-primary">Ajouter un autre visiteur</a>
+        <div class="mt-6 text-center">
+            <a href="{{ route('visiteur.create') }}"
+               class="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 rounded-lg shadow-md transition duration-300">
+                + Ajouter un autre visiteur
+            </a>
+        </div>
     </div>
 </body>
 </html>
