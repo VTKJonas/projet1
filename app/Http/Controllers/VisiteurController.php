@@ -14,17 +14,16 @@ class VisiteurController extends Controller
         return view('visiteurs.form');
     }
 
-    public function store(Request $request)
-    {
-        $data = $request->input('visiteurs');
-        foreach ($data as $visiteurData) {
-            Visiteur::create($visiteurData);
-           
-        }
+   public function store(Request $request)
+{
+    $visiteursData = $request->input('visiteurs');
 
-        return redirect()->route('visiteurs.liste')->with('success', 'Les visiteurs ont été enregistrés avec succès.');
+    foreach ($visiteursData as $data) {
+        Visiteur::create($data);
     }
 
+    return redirect()->route('visiteurs.liste')->with('success', 'Visiteurs enregistrés avec succès.');
+}
     public function liste(Request $request)
 {
     $query = Visiteur::query();
@@ -52,4 +51,17 @@ class VisiteurController extends Controller
 
             return view('visite.response', compact('visiteur', 'response'));
         }
+
+
+
+
+        public function confirmerVisite($id)
+        {
+            $visite = Visiteur::findOrFail($id);
+            $visite->confirmee = true;
+            $visite->save();
+
+            return redirect()->back()->with('success', 'Visite confirmée avec succès.');
+        }
+        
 }

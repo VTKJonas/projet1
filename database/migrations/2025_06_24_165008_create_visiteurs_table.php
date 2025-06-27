@@ -11,15 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('visiteurs', function (Blueprint $table) {
-            $table->id();
-            $table->string('nom');
-            $table->string('prenom');
-            $table->date('date');
-            $table->time('heure_arrivee');
-
-            $table->string('motif');
-            $table->timestamps();
+         Schema::create('visiteurs', function (Blueprint $table) {
+        $table->id();
+        $table->string('nom');
+        $table->string('prenom');
+        // $table->string('sexe'); // supprimé
+        $table->date('date');
+        $table->time('heure_arrivee');
+        $table->string('motif');
+        $table->boolean('confirmee')->default(false);
+        $table->timestamps();
         });
     }
 

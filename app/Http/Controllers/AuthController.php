@@ -39,4 +39,22 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
         return redirect('/login');
     }
+
+
+    public function customLogin(Request $request)
+    {
+    $credentials = $request->only('email', 'password');
+
+    if (Auth::attempt($credentials)) {
+        if ($request->type === 'locataire') {
+            return redirect()->route('locataires.index'); // ou vers une route spécifique
+        } else {
+            return redirect()->intended('dashboard'); // page admin
+        }
+    }
+
+    return back()->withErrors([
+        'email' => 'Les identifiants sont incorrects.',
+    ]);
+    }
 }

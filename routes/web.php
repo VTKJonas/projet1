@@ -71,3 +71,11 @@ Route::get('/auth.login', function () {
 
 Route::get('/locataires/create', [LocataireController::class, 'create'])->name('locataires.create');
 Route::post('/locataires', [LocataireController::class, 'store'])->name('locataires.store');
+
+Route::get('/locataires', [LocataireController::class, 'index'])->name('locataires.index');
+Route::get('/locataires/create', [LocataireController::class, 'create'])->name('locataires.create');
+Route::post('/locataires', [LocataireController::class, 'store'])->name('locataires.store');
+Route::delete('/locataires/{id}', [LocataireController::class, 'destroy'])->name('locataires.destroy');
+Route::resource('locataires', \App\Http\Controllers\LocataireController::class);
+
+

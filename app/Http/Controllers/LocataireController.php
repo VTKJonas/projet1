@@ -2,30 +2,52 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Locataire;
+
 use Illuminate\Http\Request;
 
 class LocataireController extends Controller
 {
-     public function create()
+      public function create()
     {
         return view('locataires.create');
     }
 
     // Enregistre un locataire en base de données
-    public function store(Request $request)
+   public function store(Request $request)
     {
-        // Validation des champs
-        $validated = $request->validate([
+        $request->validate([
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
             'telephone' => 'required|string|max:20',
-            'batiment' => 'required|in:1er étage,2ème étage,3ème étage',
+            'batiment' => 'required|string',
         ]);
 
-        // Enregistrement en base
-        Locataire::create($validated);
+        Locataire::create($request->only(['nom', 'prenom', 'telephone', 'batiment']));
 
-        // Redirection avec un message
-        return redirect()->route('locataires.create')->with('success', 'Locataire enregistré avec succès.');
+        return redirect()->route('locataires.index')->with('success', 'Locataire ajouté avec succès !');
     }
+
+    public function show($id)
+    {
+    $locataire = Locataire::findOrFail($id);
+    return view('locataires.show', compact('locataire'));
+    }
+    
+
+      public function index()
+    {
+        $locataires = Locataire::all();
+        return view('locataires.index', compact('locataires'));
+    }
+
+    public function destroy($id)
+    {
+    $locataire = Locataire::findOrFail($id);
+    $locataire->delete();
+
+    return redirect()->route('locataires.create')
+                     ->with('success', 'Locataire supprimé avec succès.');
+    }
+
 }
