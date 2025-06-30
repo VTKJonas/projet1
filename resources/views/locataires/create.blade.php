@@ -62,7 +62,7 @@
             </div>
 
             <!-- Bâtiment -->
-            <div class="mb-6">
+            <div class="mb-4">
                 <label for="batiment" class="block text-sm font-medium mb-1">Bâtiment</label>
                 <select name="batiment" id="batiment" required
                         class="w-full px-3 py-2 bg-champ border border-bordure rounded-md focus:outline-none focus:ring-2 focus:ring-accent">
@@ -70,6 +70,18 @@
                     <option value="1er étage">1er étage</option>
                     <option value="2ème étage">2ème étage</option>
                     <option value="3ème étage">3ème étage</option>
+                </select>
+            </div>
+
+            <!-- Type de résident -->
+            <div class="mb-6">
+                <label for="type_resident_id" class="block text-sm font-medium mb-1">Type de résident</label>
+                <select name="type_resident_id" id="type_resident_id" required
+                        class="w-full px-3 py-2 bg-champ border border-bordure rounded-md focus:outline-none focus:ring-2 focus:ring-accent">
+                    <option value="">-- Sélectionnez --</option>
+                    @foreach($typesResidents as $type)
+                        <option value="{{ $type->id }}">{{ $type->libelle }}</option>
+                    @endforeach
                 </select>
             </div>
 

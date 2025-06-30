@@ -4,15 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Locataire;
 
+use App\Models\TypeResident;
+
 use Illuminate\Http\Request;
 
 class LocataireController extends Controller
 {
       public function create()
     {
-        return view('locataires.create');
+        $typesResidents = TypeResident::all();
+        return view('locataires.create', compact('typesResidents'));
     }
-
     // Enregistre un locataire en base de données
    public function store(Request $request)
     {

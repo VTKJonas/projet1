@@ -6,8 +6,13 @@ use App\Http\Controllers\UserInfoController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LocataireController;
-
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\TypeResidentController;
+use App\Http\Controllers\VisiteController;
+use App\Http\Controllers\NotificationController;
 // Redirection par défaut
+
+
 Route::get('/', function () {
     return redirect()->route('visiteurs.create'); // page d’ajout des visiteurs
 });
@@ -78,4 +83,15 @@ Route::post('/locataires', [LocataireController::class, 'store'])->name('locatai
 Route::delete('/locataires/{id}', [LocataireController::class, 'destroy'])->name('locataires.destroy');
 Route::resource('locataires', \App\Http\Controllers\LocataireController::class);
 
+Route::get('/types-resident', [TypeResidentController::class, 'index'])->name('types-resident.index');
+Route::get('/types-resident/create', [TypeResidentController::class, 'create'])->name('types-resident.create');
+Route::post('/types-resident', [TypeResidentController::class, 'store'])->name('types-resident.store');
+Route::get('/types-resident/{id}/edit', [TypeResidentController::class, 'edit'])->name('types-resident.edit');
+Route::put('/types-resident/{id}', [TypeResidentController::class, 'update'])->name('types-resident.update');
+Route::delete('/types-resident/{id}', [TypeResidentController::class, 'destroy'])->name('types-resident.destroy');
+
+Route::get('/dates-visite', [App\Http\Controllers\VisiteurController::class, 'listeDates'])->name('dates.visite');
+Route::get('/visite/dates', [VisiteController::class, 'dates'])->name('visite.dates');
+Route::get('/dates-visites', [VisiteurController::class, 'listeDates'])->name('dates.visite');
+Route::get('/dates-visites', [VisiteurController::class, 'listeDates'])->name('dates.visite');
 

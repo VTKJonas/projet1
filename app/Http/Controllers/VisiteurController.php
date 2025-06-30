@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Visiteur;
 use App\Models\User;
+use App\Models\Visite; 
 
 class VisiteurController extends Controller
 
@@ -15,17 +16,34 @@ class VisiteurController extends Controller
     }
 
    public function store(Request $request)
-{
+    {
     $visiteursData = $request->input('visiteurs');
 
-    foreach ($visiteursData as $data) {
-        Visiteur::create($data);
+    foreach ($request->visiteurs as $data) {
+    $visiteur = new Visiteur();
+    $visiteur->nom = $data['nom'];
+    $visiteur->prenom = $data['prenom'];
+    $visiteur->sexe = $data['sexe'];
+    $visiteur->date = $data['date'];
+    $visiteur->heure_arrivee = $data['heure_arrivee'];
+    $visiteur->motif = $data['motif'];
+
+    // Gérer l'image si présente
+    if (isset($data['photo']) && $request->hasFile("visiteurs")) {
+        $photoFile = $request->file("visiteurs")[$loop->index]['photo'];
+        $photoPath = $photoFile->store('photos_visiteurs', 'public');
+        $visiteur->photo = $photoPath;
     }
 
-    return redirect()->route('visiteurs.liste')->with('success', 'Visiteurs enregistrés avec succès.');
+    $visiteur->save();
 }
+
+
+        return redirect()->route('visiteurs.liste')->with('success', 'Visiteurs enregistrés avec succès.');
+    }
+    
     public function liste(Request $request)
-{
+    {
     $query = Visiteur::query();
 
     if ($request->filled('search')) {
@@ -41,27 +59,14 @@ class VisiteurController extends Controller
 
 
 
-    public function response($id, $response)
-        {
-            $visiteur = Visiteur::findOrFail($id);
+        public function listeDates()
+    {
+         $datesVisites = Visite::select('date')
+        ->distinct()
+        ->orderBy('date', 'desc')
+        ->get();
 
-                // Ici, stocker la réponse dans la base, ou envoyer une notification, etc.
-            $visiteur->status = $response == 'accept' ? 'Accepté' : 'Refusé';
-            $visiteur->save();
-
-            return view('visite.response', compact('visiteur', 'response'));
-        }
-
-
-
-
-        public function confirmerVisite($id)
-        {
-            $visite = Visiteur::findOrFail($id);
-            $visite->confirmee = true;
-            $visite->save();
-
-            return redirect()->back()->with('success', 'Visite confirmée avec succès.');
-        }
+        return view('visite.dates', compact('datesVisites'));
+    }
         
 }

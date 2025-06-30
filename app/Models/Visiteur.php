@@ -10,4 +10,10 @@ class Visiteur extends Model
     protected $fillable = [
         'nom', 'prenom', 'date', 'heure_arrivee', 'heure_depart', 'motif'
     ];
+
+    public function locataire()
+    {
+        return $this->belongsTo(Locataire::class);
+    }
+
 }
