@@ -1,70 +1,70 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Détails du locataire</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-blue-800 min-h-screen flex items-center justify-center py-10">
+@extends('layouts.app')
 
-    <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border border-green-300">
-        <h2 class="text-2xl font-bold text-center text-green-800 mb-6">Détails du locataire</h2>
+@section('title', 'Détails du Locataire')
 
-        <div class="space-y-4 text-gray-700">
+@section('content')
+    <div class="bg-white border border-telegramBorder rounded-xl shadow-lg overflow-hidden p-6">
+        <h1 class="text-3xl font-bold text-telegramAccent mb-8 text-center">Détails du Locataire</h1>
 
-            <!-- Nom -->
-            <div class="flex items-center gap-2">
-                <svg class="h-5 w-5 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 10a4 4 0 100-8 4 4 0 000 8zm0 2c-3.315 0-6 2.239-6 5h12c0-2.761-2.685-5-6-5z"/>
-                </svg>
-                <p><strong>Nom :</strong> {{ $locataire->nom }}</p>
+        @if(session('success'))
+            <div class="bg-telegramSuccessBg text-telegramSuccessText px-4 py-3 rounded mb-6 text-center border border-green-400">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Informations Générales -->
+            <div class="bg-telegramBg p-4 rounded-lg border border-telegramBorder">
+                <h2 class="text-xl font-semibold text-telegramAccent mb-4">Informations Générales</h2>
+                <div class="flex items-center mb-4">
+                    @if($locataire->profile_photo_path)
+                        <img src="{{ Storage::url($locataire->profile_photo_path) }}" alt="Photo de {{ $locataire->prenom }}" class="h-24 w-24 object-cover rounded-full mr-4 border border-telegramBorder">
+                    @else
+                        <img src="https://placehold.co/96x96/cccccc/ffffff?text=NP" alt="Pas de photo" class="h-24 w-24 object-cover rounded-full mr-4 border border-telegramBorder">
+                    @endif
+                    <div>
+                        <p><strong>Nom:</strong> {{ $locataire->nom }}</p>
+                        <p><strong>Prénom:</strong> {{ $locataire->prenom }}</p>
+                        <p><strong>Téléphone:</strong> {{ $locataire->telephone }}</p>
+                        <p><strong>Bâtiment:</strong> {{ $locataire->batiment }}</p>
+                    </div>
+                </div>
             </div>
 
-            <!-- Prénom -->
-            <div class="flex items-center gap-2">
-                <svg class="h-5 w-5 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10 10a4 4 0 100-8 4 4 0 000 8zm0 2c-3.315 0-6 2.239-6 5h12c0-2.761-2.685-5-6-5z"/>
-                </svg>
-                <p><strong>Prénom :</strong> {{ $locataire->prenom }}</p>
-            </div>
-
-            <!-- Téléphone -->
-            <div class="flex items-center gap-2">
-                <svg class="h-5 w-5 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M3 5a2 2 0 012-2h3l2 4-2 2H5v6h2l2 2-2 4H5a2 2 0 01-2-2V5z"/>
-                </svg>
-                <p><strong>Téléphone :</strong> {{ $locataire->telephone }}</p>
-            </div>
-
-            <!-- Bâtiment -->
-            <div class="flex items-center gap-2">
-                <svg class="h-5 w-5 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd"
-                          d="M10 2a1 1 0 01.894.553l7 14A1 1 0 0117 18H3a1 1 0 01-.894-1.447l7-14A1 1 0 0110 2zM9 12a1 1 0 112 0v4a1 1 0 11-2 0v-4z"
-                          clip-rule="evenodd" />
-                </svg>
-                <p><strong>Bâtiment :</strong> {{ $locataire->batiment }}</p>
+            <!-- Type de Résident -->
+            <div class="bg-telegramBg p-4 rounded-lg border border-telegramBorder">
+                <h2 class="text-xl font-semibold text-telegramAccent mb-4">Type de Résident</h2>
+                @if($locataire->typeResident)
+                    <p><strong>Libellé:</strong> {{ $locataire->typeResident->libelle }}</p>
+                @else
+                    <p class="italic text-gray-500">Aucun type de résident associé.</p>
+                @endif
             </div>
         </div>
 
-        <!-- Bouton pour ajouter un autre locataire -->
-        <a href="{{ route('locataires.create') }}"
-           class="mt-6 block text-center bg-green-600 text-white py-2 rounded-md hover:bg-green-700 transition duration-200">
-            Ajouter un autre locataire
-        </a>
+        <!-- Boutons d'action -->
+        <div class="flex flex-wrap gap-4 mt-8 justify-center">
+            <a href="{{ route('locataires.index') }}"
+               class="inline-flex items-center px-6 py-2 text-sm font-medium rounded-md text-white bg-gray-600 hover:bg-gray-700 transition duration-200 shadow-md">
+                <i class="ti ti-arrow-left mr-2"></i> Retour à la liste
+            </a>
 
-        <!-- Bouton pour supprimer ce locataire -->
-        <form action="{{ route('locataires.destroy', $locataire->id) }}" method="POST" class="mt-3">
-            @csrf
-            @method('DELETE')
-            <button type="submit"
-                    onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce locataire ?')"
-                    class="w-full bg-red-600 text-white py-2 rounded-md hover:bg-red-700 transition duration-200">
-                Supprimer ce locataire
-            </button>
-        </form>
+            <!-- Bouton Modifier -->
+            <a href="{{ route('locataires.edit', $locataire->id) }}"
+               class="inline-flex items-center px-6 py-2 text-sm font-medium rounded-md text-white bg-telegramAccent hover:bg-blue-700 transition duration-200 shadow-md">
+                <i class="ti ti-edit mr-2"></i> Modifier
+            </a>
+
+            <!-- Supprimer -->
+            <form action="{{ route('locataires.destroy', $locataire->id) }}" method="POST"
+                  onsubmit="return confirm('Voulez-vous vraiment supprimer ce locataire ? Cette action est irréversible.')">
+                @csrf
+                @method('DELETE')
+                <button type="submit"
+                        class="inline-flex items-center px-6 py-2 text-sm font-medium rounded-md text-white bg-red-500 hover:bg-red-600 transition duration-200 shadow-md">
+                    <i class="ti ti-trash mr-2"></i> Supprimer le locataire
+                </button>
+            </form>
+        </div>
     </div>
-
-</body>
-</html>
+@endsection

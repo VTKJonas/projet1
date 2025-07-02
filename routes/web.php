@@ -1,97 +1,71 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\VisiteurController;
-use App\Http\Controllers\UserInfoController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\LocataireController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\TypeResidentController;
 use App\Http\Controllers\VisiteController;
+use App\Http\Controllers\LocataireController;
+use App\Http\Controllers\TypeResidentController;
 use App\Http\Controllers\NotificationController;
-// Redirection par défaut
+use App\Http\Controllers\SettingsController;
 
 
+// Route de base (page d'accueil ou redirection)
 Route::get('/', function () {
-    return redirect()->route('visiteurs.create'); // page d’ajout des visiteurs
+    // Redirige vers la page de connexion par défaut si non authentifié
+    // ou vers la page des visites si authentifié
+    return redirect()->route('login');
 });
 
-// ---------------------------
-// Authentification
-// ---------------------------
+// Routes d'authentification
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-// Page protégée après connexion
-Route::get('/dashboard', function () {
-    return 'Bienvenue dans le dashboard !';
-})->middleware('auth');
+// Groupe de routes nécessitant une authentification
+Route::middleware(['auth'])->group(function () {
 
-// ---------------------------
-// Formulaires visiteurs
-// ---------------------------
-
-// Formulaire pour ajouter plusieurs visiteurs
-Route::get('/visiteurs', [VisiteurController::class, 'create'])->name('visiteurs.create');
-Route::post('/visiteurs/store', [VisiteurController::class, 'store'])->name('visiteurs.store');
-
-// Liste des visiteurs enregistrés
-Route::get('/visiteurs/liste', [VisiteurController::class, 'liste'])->name('visiteurs.liste');
-
-// ---------------------------
-// Deuxième formulaire (infos complémentaires ?)
-// ---------------------------
-Route::get('/userinfo', [UserInfoController::class, 'create'])->name('userinfo.create');
-Route::post('/userinfo', [UserInfoController::class, 'store'])->name('userinfo.store');
-
-// Page test protégée (peut être supprimée si inutile)
-Route::get('/visite', function () {
-    return view('visiteurs.form');
-})->middleware('auth')->name('visite');
+    // --------------------------------------------------------------------
+    // Routes pour les Paramètres de l'Application (gérées par SettingsController)
+    // --------------------------------------------------------------------
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings', [SettingsController::class, 'store'])->name('settings.store');
+    Route::post('/settings/reset', [SettingsController::class, 'reset'])->name('settings.reset');
+    Route::delete('/settings/clear-all', [SettingsController::class, 'clearAll'])->name('settings.clearAll');
 
 
-Route::get('/visiteurs/row/{index}', function ($index) {
-    return view('visiteurs.partials.form-row', compact('index'));
+    // --------------------------------------------------------------------
+    // Routes pour les Visites (gérées par VisiteController)
+    // --------------------------------------------------------------------
+    Route::get('/visites/create', [VisiteController::class, 'create'])->name('visites.create');
+    Route::post('/visites', [VisiteController::class, 'store'])->name('visites.store');
+    Route::get('/visites/liste', [VisiteController::class, 'liste'])->name('visites.liste');
+    Route::get('/visites/{id}', [VisiteController::class, 'show'])->name('visites.show');
+    Route::post('/visites/{id}/confirm', [VisiteController::class, 'confirm'])->name('visites.confirm');
+    Route::post('/visites/{id}/unconfirm', [VisiteController::class, 'unconfirm'])->name('visites.unconfirm');
+    Route::delete('/visites/{id}', [VisiteController::class, 'destroy'])->name('visites.destroy');
+    Route::get('/dates-visites', [VisiteController::class, 'listeDates'])->name('dates.visite');
+
+
+    // --------------------------------------------------------------------
+    // Routes pour les Locataires (gérées par LocataireController)
+    // --------------------------------------------------------------------
+    Route::resource('locataires', LocataireController::class);
+
+
+    // --------------------------------------------------------------------
+    // Routes pour les Types de Résidents (gérées par TypeResidentController)
+    // --------------------------------------------------------------------
+    Route::resource('types-resident', TypeResidentController::class);
+
+
+    // --------------------------------------------------------------------
+    // Routes pour les Notifications (gérées par NotificationController)
+    // --------------------------------------------------------------------
+    Route::post('/notifications/{id}/lue', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::post('/notifications/{id}/accepter', [NotificationController::class, 'accepter'])->name('notifications.accepter');
+    Route::post('/notifications/{id}/refuser', [NotificationController::class, 'refuser'])->name('notifications.refuser');
+    Route::post('/notifications/{id}/bannir', [NotificationController::class, 'bannir'])->name('notifications.bannir');
+
+
 });
-
-
-Route::get('/visiteurs', [VisiteurController::class, 'create'])->name('visiteurs.create');
-Route::post('/visiteurs/store', [VisiteurController::class, 'store'])->name('visiteurs.store');
-Route::get('/visiteurs/liste', [VisiteurController::class, 'liste'])->name('visiteurs.liste');
-
-
-Route::get('/visite/response/{id}/{response}', [VisiteurController::class, 'response'])->name('visite.response');
-
-
-Route::get('/login', [UserController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [UserController::class, 'login']);
-Route::post('/logout', [UserController::class, 'logout'])->name('logout');
-
-// Ta vue personnalisée ici
-Route::get('/auth.login', function () {
-    return view('visiteurs.form'); // ← modifie selon ton fichier blade
-})->name('visiteurs.form')->middleware('auth');
-
-Route::get('/locataires/create', [LocataireController::class, 'create'])->name('locataires.create');
-Route::post('/locataires', [LocataireController::class, 'store'])->name('locataires.store');
-
-Route::get('/locataires', [LocataireController::class, 'index'])->name('locataires.index');
-Route::get('/locataires/create', [LocataireController::class, 'create'])->name('locataires.create');
-Route::post('/locataires', [LocataireController::class, 'store'])->name('locataires.store');
-Route::delete('/locataires/{id}', [LocataireController::class, 'destroy'])->name('locataires.destroy');
-Route::resource('locataires', \App\Http\Controllers\LocataireController::class);
-
-Route::get('/types-resident', [TypeResidentController::class, 'index'])->name('types-resident.index');
-Route::get('/types-resident/create', [TypeResidentController::class, 'create'])->name('types-resident.create');
-Route::post('/types-resident', [TypeResidentController::class, 'store'])->name('types-resident.store');
-Route::get('/types-resident/{id}/edit', [TypeResidentController::class, 'edit'])->name('types-resident.edit');
-Route::put('/types-resident/{id}', [TypeResidentController::class, 'update'])->name('types-resident.update');
-Route::delete('/types-resident/{id}', [TypeResidentController::class, 'destroy'])->name('types-resident.destroy');
-
-Route::get('/dates-visite', [App\Http\Controllers\VisiteurController::class, 'listeDates'])->name('dates.visite');
-Route::get('/visite/dates', [VisiteController::class, 'dates'])->name('visite.dates');
-Route::get('/dates-visites', [VisiteurController::class, 'listeDates'])->name('dates.visite');
-Route::get('/dates-visites', [VisiteurController::class, 'listeDates'])->name('dates.visite');
 

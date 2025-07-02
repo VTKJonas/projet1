@@ -6,52 +6,71 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use App\Models\Visite; // Importez le modèle Visite
 
 class NouvelleVisiteNotification extends Notification
 {
     use Queueable;
-    public $visiteur;
 
-   public function __construct(Visiteur $visiteur)
-    {
-        $this->visiteur = $visiteur;
-    }
+    public $visite; // Propriété pour stocker l'objet Visite
+
     /**
-     * Get the notification's delivery channels.
+     * Crée une nouvelle instance de notification.
      *
-     * @return array<int, string>
+     * @param  \App\Models\Visite  $visite
+     * @return void
      */
-     public function via($notifiable)
+    public function __construct(Visite $visite)
     {
-        return ['mail', 'database']; // tu peux aussi mettre juste ['database']
-    }
-    
-     public function toMail($notifiable)
-    {
-        return (new MailMessage)
-            ->subject('Nouvelle visite enregistrée')
-            ->greeting('Bonjour ' . $notifiable->nom)
-            ->line('Un visiteur a été enregistré pour vous.')
-            ->line('Nom : ' . $this->visiteur->nom . ' ' . $this->visiteur->prenom)
-            ->line('Date : ' . $this->visiteur->date)
-            ->line('Heure d\'arrivée : ' . $this->visiteur->heure_arrivee)
-            ->action('Confirmer la visite', url('/confirmations'))
-            ->line('Merci de confirmer la visite.');
+        $this->visite = $visite;
     }
 
     /**
-     * Get the array representation of the notification.
+     * Obtenez les canaux de notification.
      *
-     * @return array<string, mixed>
+     * @param  mixed  $notifiable
+     * @return array
+     */
+    public function via($notifiable)
+    {
+        // Nous allons utiliser le canal 'database' pour les notifications internes à l'application.
+        // Vous pouvez ajouter 'mail' si vous configurez l'envoi d'e-mails.
+        return ['database'];
+    }
+
+    /**
+     * Obtenez la représentation de la notification pour la base de données.
+     *
+     * @param  mixed  $notifiable
+     * @return array
      */
     public function toArray($notifiable)
     {
+        // Ces données seront stockées dans la colonne 'data' de la table 'notifications'.
         return [
-            'nom' => $this->visiteur->nom,
-            'prenom' => $this->visiteur->prenom,
-            'motif' => $this->visiteur->motif,
-            'date' => $this->visiteur->date,
-            'heure_arrivee' => $this->visiteur->heure_arrivee
+            'visite_id' => $this->visite->id,
+            'visiteur_nom' => $this->visite->nom,
+            'visiteur_prenom' => $this->visite->prenom,
+            'date_visite' => $this->visite->date,
+            'heure_arrivee' => $this->visite->heure_arrivee,
+            'motif' => $this->visite->motif,
+            'message' => "Nouvelle visite de {$this->visite->prenom} {$this->visite->nom} le {$this->visite->date} à {$this->visite->heure_arrivee} pour le motif : {$this->visite->motif}.",
         ];
     }
+
+    // Si vous voulez envoyer des notifications par e-mail, décommentez et configurez ceci:
+    /*
+    public function toMail($notifiable)
+    {
+        return (new MailMessage)
+                    ->line("Bonjour {$notifiable->prenom},")
+                    ->line("Vous avez une nouvelle visite prévue :")
+                    ->line("Visiteur: {$this->visite->prenom} {$this->visite->nom}")
+                    ->line("Date: {$this->visite->date}")
+                    ->line("Heure d'arrivée: {$this->visite->heure_arrivee}")
+                    ->line("Motif: {$this->visite->motif}")
+                    ->action('Voir la visite', url('/visites/' . $this->visite->id))
+                    ->line('Merci d\'utiliser notre application !');
+    }
+    */
 }

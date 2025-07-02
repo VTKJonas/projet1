@@ -14,7 +14,6 @@ return new class extends Migration {
             $table->string('sexe');
             $table->date('date');
             $table->time('heure_arrivee');
-            $table->time('heure_depart')->nullable();
             $table->string('motif');
             $table->timestamps();
         });
